@@ -19,12 +19,18 @@ import ARAttackVisualizer from "@/components/ARAttackVisualizer";
 
 const queryClient = new QueryClient();
 
-/* Dashboard Layout */
+
+/* ===============================
+   DASHBOARD LAYOUT
+================================ */
+
 const Dashboard = () => {
+
   return (
+
     <div className="space-y-8">
 
-      {/* Main dashboard page */}
+      {/* MAIN CYBER DEFENSE DASHBOARD */}
       <Index />
 
       <div className="container mx-auto p-6 space-y-8">
@@ -33,43 +39,71 @@ const Dashboard = () => {
           Guardian AI Cyber Defense Platform
         </h1>
 
-        {/* Attack Monitoring */}
+
+        {/* ATTACK MONITORING */}
         <AttackMonitor />
 
-        {/* Digital Twin Honeypot */}
+
+        {/* DIGITAL TWIN HONEYPOT */}
         <DigitalTwin />
 
-        {/* AR Attack Visualization */}
+
+        {/* AR ATTACK VISUALIZATION */}
+
         <div>
+
           <h2 className="text-xl font-semibold mb-4">
+
             AR Cyber Attack Visualization
+
           </h2>
+
           <ARAttackVisualizer />
+
         </div>
 
-        {/* Notification Settings */}
+
+        {/* NOTIFICATION SETTINGS */}
+
         <NotificationSettings />
 
       </div>
+
     </div>
+
   );
+
 };
 
+
+/* ===============================
+   MAIN APPLICATION
+================================ */
+
 const App = () => (
+
   <QueryClientProvider client={queryClient}>
+
     <TooltipProvider>
+
       <Toaster />
+
       <Sonner />
 
       <BrowserRouter>
+
         <AuthProvider>
 
           <Routes>
 
-            {/* Authentication Page */}
+
+            {/* AUTH PAGE */}
+
             <Route path="/auth" element={<Auth />} />
 
-            {/* Dashboard */}
+
+            {/* MAIN DASHBOARD */}
+
             <Route
               path="/"
               element={
@@ -79,7 +113,9 @@ const App = () => (
               }
             />
 
-            {/* Attack Simulation */}
+
+            {/* ATTACK SIMULATION PAGE */}
+
             <Route
               path="/simulation"
               element={
@@ -89,15 +125,21 @@ const App = () => (
               }
             />
 
-            {/* 404 */}
+
+            {/* 404 PAGE */}
+
             <Route path="*" element={<NotFound />} />
 
           </Routes>
 
         </AuthProvider>
+
       </BrowserRouter>
+
     </TooltipProvider>
+
   </QueryClientProvider>
+
 );
 
 export default App;
