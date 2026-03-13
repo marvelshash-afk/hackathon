@@ -9,6 +9,7 @@ import BlockchainLedger from '@/components/BlockchainLedger';
 import RecommendationPanel from '@/components/RecommendationPanel';
 import AIAssistant from '@/components/AIAssistant';
 import ReportGenerator from '@/components/ReportGenerator';
+import NotificationSettings from '@/components/NotificationSettings';
 
 const DashboardContent = () => {
   const [activeView, setActiveView] = useState('dashboard');
