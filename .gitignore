@@ -22,3 +22,22 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+# ML Models
+ml/*.pkl
+
+# Datasets
+ml/*.txt
+ml/*.csv
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Node modules
+node_modules/
+
+# environment variables
+.env
+
+# logs
+*.log

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react"
 import { useAttackDetection } from "@/hooks/useAttackDetection"
-import { AttackAlert } from "@/services/notificationService"
+import { AttackAlert } from "@/service/notificationService"
 
 import {
   Shield,
