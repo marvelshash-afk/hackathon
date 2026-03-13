@@ -64,10 +64,8 @@ const DashboardContent = () => {
 
         {activeView === 'settings' && (
           <div className="max-w-[1600px] mx-auto space-y-3">
-            <h2 className="text-lg font-bold text-foreground">Settings</h2>
-            <div className="bg-card border border-border rounded-lg p-6">
-              <p className="text-sm text-muted-foreground">System configuration coming soon. Use the sidebar controls to manage simulations.</p>
-            </div>
+            <h2 className="text-lg font-bold text-foreground">Settings & Notifications</h2>
+            <NotificationSettings />
           </div>
         )}
       </main>
