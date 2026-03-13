@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageSquare, Send, X, Bot } from 'lucide-react';
+import { MessageSquare, Send, X, Bot, Shield } from 'lucide-react';
 import { useThreatContext } from '@/context/ThreatContext';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import ReactMarkdown from 'react-markdown';
+import ThreatVisual from '@/components/ThreatVisual';
 
 const AIAssistant = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,10 +17,12 @@ const AIAssistant = () => {
     }
   }, [chatMessages]);
 
-  // Auto-open when new threat detected
   useEffect(() => {
     if (chatMessages.length > 1) setIsOpen(true);
   }, [chatMessages.length]);
+
+  // Find the latest unblocked threat for visual display
+  const latestThreat = threats.find(t => !t.blocked);
 
   const handleSend = () => {
     if (!input.trim()) return;
@@ -28,7 +30,6 @@ const AIAssistant = () => {
     addChatMessage(userMsg);
     setInput('');
 
-    // Simple local responses (could be replaced with Lovable AI)
     setTimeout(() => {
       const activeCount = threats.filter(t => !t.blocked).length;
       let response = '';
@@ -39,16 +40,44 @@ const AIAssistant = () => {
         response = '🛡️ **Attack Prevention Guide:**\n\n1. Click the **Block** button next to any active threat in the attack table\n2. This simulates adding a firewall rule to block the malicious IP\n3. The dashboard will update to show the threat as mitigated\n\nFor automated blocking, consider enabling auto-block for threats with severity ≥ 8.';
       } else if (lower.includes('report') || lower.includes('download')) {
         response = '📊 **Security Reports:**\n\nYou can generate a downloadable security report from the **Reports** section in the sidebar. The report includes:\n• Attack history & timeline\n• Severity analysis\n• Threat trend graphs\n• Recommended security improvements';
+      } else if (lower.includes('visual') || lower.includes('show') || lower.includes('explain')) {
+        response = `__SHOW_THREAT_VISUAL__`;
       } else {
-        response = `I'm your AI security assistant. I can help you with:\n\n• **"What's my status?"** — Current threat overview\n• **"How to block attacks?"** — Prevention guide\n• **"Generate report"** — Security report info\n\nI also automatically alert you when new threats are detected. Current active threats: **${activeCount}**`;
+        response = `I'm your AI security assistant. I can help you with:\n\n• **"What's my status?"** — Current threat overview\n• **"How to block attacks?"** — Prevention guide\n• **"Show me the threat"** — Visual attack analysis\n• **"Generate report"** — Security report info\n\nI also automatically alert you when new threats are detected. Current active threats: **${activeCount}**`;
       }
       addChatMessage({ id: crypto.randomUUID(), role: 'assistant', content: response, timestamp: new Date() });
     }, 800);
   };
 
+  const renderMessage = (msg: typeof chatMessages[0]) => {
+    // Visual threat card for special messages
+    if (msg.role === 'assistant' && msg.content === '__SHOW_THREAT_VISUAL__') {
+      return latestThreat ? (
+        <div className="space-y-2">
+          <p className="text-[10px] text-muted-foreground mb-2">📊 Live threat analysis:</p>
+          <ThreatVisual threat={latestThreat} />
+        </div>
+      ) : (
+        <p className="text-xs text-success">✅ No active threats to visualize. All systems secure.</p>
+      );
+    }
+
+    // Check if message contains a threat alert (auto-generated)
+    const isThreatAlert = msg.role === 'assistant' && msg.content.includes('🚨 **THREAT DETECTED');
+    const alertThreat = isThreatAlert ? threats.find(t => msg.content.includes(t.sourceIp)) : null;
+
+    return (
+      <div className="space-y-2">
+        {alertThreat && <ThreatVisual threat={alertThreat} />}
+        <div className="prose prose-invert prose-xs max-w-none [&>*]:my-1 [&_ul]:pl-4 [&_li]:my-0.5">
+          <ReactMarkdown>{msg.content}</ReactMarkdown>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <>
-      {/* Toggle button */}
       {!isOpen && (
         <motion.button
           initial={{ scale: 0 }}
@@ -58,14 +87,11 @@ const AIAssistant = () => {
         >
           <MessageSquare className="h-5 w-5" />
           {chatMessages.length > 1 && (
-            <span className="absolute -top-1 -right-1 w-4 h-4 bg-destructive rounded-full text-[9px] font-bold flex items-center justify-center text-destructive-foreground">
-              !
-            </span>
+            <span className="absolute -top-1 -right-1 w-4 h-4 bg-destructive rounded-full text-[9px] font-bold flex items-center justify-center text-destructive-foreground">!</span>
           )}
         </motion.button>
       )}
 
-      {/* Chat panel */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -75,7 +101,6 @@ const AIAssistant = () => {
             transition={{ type: 'spring', damping: 25 }}
             className="fixed top-0 right-0 z-50 h-screen w-96 bg-card border-l border-border flex flex-col shadow-2xl"
           >
-            {/* Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-border">
               <div className="flex items-center gap-2">
                 <Bot className="h-4 w-4 text-primary" />
@@ -87,7 +112,6 @@ const AIAssistant = () => {
               </button>
             </div>
 
-            {/* Messages */}
             <div ref={scrollRef} className="flex-1 overflow-auto p-4 space-y-4">
               {chatMessages.map(msg => (
                 <motion.div
@@ -97,13 +121,11 @@ const AIAssistant = () => {
                   className={msg.role === 'user' ? 'flex justify-end' : 'flex justify-start'}
                 >
                   <div className={
-                    msg.role === 'user' 
+                    msg.role === 'user'
                       ? 'bg-primary/10 text-foreground rounded-lg px-3 py-2 max-w-[85%] text-xs'
                       : 'bg-secondary text-foreground rounded-lg px-3 py-2 max-w-[90%] text-xs'
                   }>
-                    <div className="prose prose-invert prose-xs max-w-none [&>*]:my-1 [&_ul]:pl-4 [&_li]:my-0.5">
-                      <ReactMarkdown>{msg.content}</ReactMarkdown>
-                    </div>
+                    {renderMessage(msg)}
                     <p className="text-[9px] text-muted-foreground mt-1.5">
                       {msg.timestamp.toLocaleTimeString('en-US', { hour12: false })}
                     </p>
@@ -112,8 +134,18 @@ const AIAssistant = () => {
               ))}
             </div>
 
-            {/* Input */}
             <div className="p-3 border-t border-border">
+              <div className="flex gap-2 mb-2">
+                {['Status', 'Show threat', 'Block help'].map(q => (
+                  <button
+                    key={q}
+                    onClick={() => { setInput(q); }}
+                    className="text-[9px] px-2 py-1 rounded-full bg-secondary text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                  >
+                    {q}
+                  </button>
+                ))}
+              </div>
               <div className="flex gap-2">
                 <input
                   value={input}
@@ -122,10 +154,7 @@ const AIAssistant = () => {
                   placeholder="Ask about threats..."
                   className="flex-1 bg-background border border-border rounded-md px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
                 />
-                <button
-                  onClick={handleSend}
-                  className="px-3 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
-                >
+                <button onClick={handleSend} className="px-3 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors">
                   <Send className="h-3.5 w-3.5" />
                 </button>
               </div>

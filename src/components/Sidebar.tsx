@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { Shield, LayoutDashboard, ScrollText, FileText, Settings, Activity, ChevronLeft, ChevronRight, Zap } from 'lucide-react';
+import { Shield, LayoutDashboard, ScrollText, FileText, Settings, Activity, ChevronLeft, ChevronRight, Zap, MonitorPlay, LogOut, Bell, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useThreatContext } from '@/context/ThreatContext';
+import { useAuth } from '@/context/AuthContext';
+import { Link } from 'react-router-dom';
 
 const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard', id: 'dashboard' },
@@ -19,13 +21,13 @@ interface SidebarProps {
 const Sidebar = ({ activeView, onViewChange }: SidebarProps) => {
   const [collapsed, setCollapsed] = useState(false);
   const { activeThreats, isSimulating, toggleSimulation, simulateAttack } = useThreatContext();
+  const { signOut, user } = useAuth();
 
   return (
     <div className={cn(
       "flex flex-col h-screen bg-sidebar border-r border-sidebar-border transition-all duration-300",
       collapsed ? "w-16" : "w-60"
     )}>
-      {/* Logo */}
       <div className="flex items-center gap-3 px-4 h-16 border-b border-sidebar-border">
         <Shield className="h-7 w-7 text-primary flex-shrink-0" />
         {!collapsed && (
@@ -36,7 +38,6 @@ const Sidebar = ({ activeView, onViewChange }: SidebarProps) => {
         )}
       </div>
 
-      {/* Nav */}
       <nav className="flex-1 py-4 space-y-1 px-2">
         {navItems.map(item => (
           <button
@@ -58,9 +59,17 @@ const Sidebar = ({ activeView, onViewChange }: SidebarProps) => {
             )}
           </button>
         ))}
+
+        {/* Simulation link */}
+        <Link
+          to="/simulation"
+          className="flex items-center gap-3 w-full px-3 py-2.5 rounded-md text-sm text-sidebar-foreground hover:bg-sidebar-accent hover:text-foreground transition-colors"
+        >
+          <MonitorPlay className="h-4 w-4 flex-shrink-0" />
+          {!collapsed && <span>Simulation</span>}
+        </Link>
       </nav>
 
-      {/* Actions */}
       <div className="p-2 border-t border-sidebar-border space-y-2">
         {!collapsed && (
           <>
@@ -80,6 +89,20 @@ const Sidebar = ({ activeView, onViewChange }: SidebarProps) => {
             >
               <Activity className="h-4 w-4" />
               {isSimulating ? 'Auto-Sim: ON' : 'Auto-Sim: OFF'}
+            </button>
+            <button
+              onClick={() => onViewChange('settings')}
+              className="flex items-center gap-2 w-full px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <Bell className="h-4 w-4" />
+              Notifications
+            </button>
+            <button
+              onClick={signOut}
+              className="flex items-center gap-2 w-full px-3 py-2 rounded-md text-sm text-destructive/70 hover:text-destructive hover:bg-destructive/10 transition-colors"
+            >
+              <LogOut className="h-4 w-4" />
+              Sign Out
             </button>
           </>
         )}
