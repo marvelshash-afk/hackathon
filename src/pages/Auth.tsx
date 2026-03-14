@@ -84,7 +84,7 @@ const Auth = () => {
           >
             <Shield className="h-8 w-8 text-primary" />
           </motion.div>
-          <h1 className="text-2xl font-bold text-foreground tracking-wide">NULL BREACH</h1>
+          <h1 className="text-2xl font-bold text-foreground tracking-wide">THREAT ZERO</h1>
           <p className="text-xs text-muted-foreground uppercase tracking-[0.3em] mt-1">Cyber Defense Platform</p>
         </div>
 

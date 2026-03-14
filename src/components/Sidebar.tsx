@@ -13,7 +13,8 @@ import {
   LogOut, 
   Bell, 
   User,
-  Server
+  Server,
+  Cpu
 } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
@@ -34,6 +35,8 @@ const navItems = [
   { icon: Activity, label: 'Live Logs', id: 'logs' },
 
   { icon: ScrollText, label: 'Blockchain', id: 'blockchain' },
+  
+  { icon: Cpu, label: 'AI SOC', id: 'ai-soc' },
 
   { icon: FileText, label: 'Reports', id: 'reports' },
 
@@ -75,7 +78,7 @@ const Sidebar = ({ activeView, onViewChange }: SidebarProps) => {
         {!collapsed && (
           <div>
             <h1 className="text-sm font-bold text-foreground tracking-wide">
-              NULL BREACH
+              THREAT ZERO
             </h1>
 
             <p className="text-[10px] text-muted-foreground uppercase tracking-widest">

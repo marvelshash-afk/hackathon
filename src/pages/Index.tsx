@@ -11,7 +11,8 @@ import AIAssistant from '@/components/AIAssistant';
 import ReportGenerator from '@/components/ReportGenerator';
 import NotificationSettings from '@/components/NotificationSettings';
 import ServerDashboard from "@/pages/ServerDashboard";   // NEW IMPORT
-
+import AIChatbot from "@/pages/AIChatbot";
+import SOCDashboard from "@/pages/SOCDashboard";
 
 const DashboardContent = () => {
 
@@ -141,7 +142,7 @@ const DashboardContent = () => {
 
         )}
 
-
+    
 
         {/* =========================
            REPORTS
@@ -184,6 +185,18 @@ const DashboardContent = () => {
           </div>
 
         )}
+       {activeView === "ai-chatbot" && (
+
+  <div className="max-w-[1600px] mx-auto">
+
+    <AIChatbot />
+
+  </div>
+
+)}
+{activeView === "ai-soc" && (
+  <SOCDashboard />
+)}
 
       </main>
 
